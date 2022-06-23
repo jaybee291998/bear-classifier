@@ -5,12 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bear Classifier</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <h2>Bear Classifier</h2>
-    <input type="file" name="my-image" id="fileupload">
+    <img src="#" alt="" id="blah"><br>
+    <input accept="image/" type="file" name="my-image" id="fileupload">
 </body>
     <script>
-        
+        let x = document.getElementById("fileupload");
+        let blah = document.getElementById("blah");
+        x.onchange = e => {
+            const [file] = x.files;
+            if(file){
+                blah.src = URL.createObjectURL(file);
+            }
+        }
     </script>
 </html>
