@@ -10,16 +10,51 @@
 <body>
     <h2>Bear Classifier</h2>
     <img src="#" alt="" id="blah"><br>
-    <input accept="image/" type="file" name="my-image" id="fileupload">
+    <input accept="image/" type="file" name="my-image" id="fileupload"><br>
+    <button id="predict">predict</button>
+    <div>
+        <b>Type: </b><p id="type-id"></p>
+        <b>Confidence: </b><p id="confidence-id"></p>
+    </div>
 </body>
     <script>
         let x = document.getElementById("fileupload");
         let blah = document.getElementById("blah");
+        let predict = document.getElementById("predict")
+        let loc = window.location;
+
+        let bearType = document.getElementById('type-id');
+        let confidence = document.getElementById('confidence-id');
+
+        let url_new = `${loc.protocol}//${loc.hostname}:${loc.port}/uploadfile`;
+        console.log(url_new);
+        let url = 'http://127.0.0.2:8000/uploadfile';
+
         x.onchange = e => {
             const [file] = x.files;
             if(file){
                 blah.src = URL.createObjectURL(file);
             }
+        }
+
+        predict.onclick = async e => {
+            let data = new FormData();
+            data.append('file', x.files[0]);
+            let j = await postData(data);
+            console.log(j);
+
+            bearType.textContent = j['bear_type'];
+            confidence.textContent = j['preds'][j['index']];
+        }
+
+        async function postData(formData){
+            let res = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            return data;
         }
     </script>
 </html>

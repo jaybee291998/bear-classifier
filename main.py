@@ -15,6 +15,7 @@ from fastai.vision.all import *
 # from fastai.vision import *
 
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from PIL import Image
@@ -24,19 +25,20 @@ from utils import *
 learn = load_learner('model/bearV3.pkl')
 app = FastAPI()
 
+origins = [
+    'http://localhost:8080'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 vocab = ['black', 'grizzly', 'teddy']
 
-
-def transform_image(im):
-    my_transforms = transforms.Compose([transforms.Resize(255),
-                                        transforms.CenterCrop(224),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize(
-                                            [0.485, 0.456, 0.406],
-                                            [0.229, 0.224, 0.225])])
-
-    return my_transforms(im)
 
 class ModelName(str, Enum):
     alexnet = "AlexNet"
@@ -48,6 +50,7 @@ class Item(BaseModel):
     description: Union[str, None] = None
     price: float
     tax: Union[float, None] = None
+
 
 @app.get('/')
 async def root():
@@ -81,5 +84,6 @@ async def upload(file: UploadFile):
     preds = learn.predict(im)
     # preds =' noene'
     probabilities = preds[2].tolist()
-    bear_type = vocab[argmax(probabilities)]
-    return {'preds':probabilities, 'bear_type':bear_type}
+    bear_type_index = argmax(probabilities)
+    bear_type = vocab[bear_type_index]
+    return {'preds':probabilities, 'bear_type':bear_type, 'index':int(bear_type_index)}
