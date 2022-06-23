@@ -43,8 +43,8 @@ h11==0.13.0
 huggingface-hub==0.7.0
 idna==3.3
 ipykernel==6.9.2
-ipython==8.1.1
-ipython-genutils==0.2.0
+ipython
+ipython-genutils
 ipywidgets==7.7.0
 jedi==0.18.1
 Jinja2==3.0.3
